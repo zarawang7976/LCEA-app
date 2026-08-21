@@ -3,6 +3,7 @@ import HomeScreen from "./components/HomeScreen";
 import ImageViewer from "./components/ImageViewer";
 import InfoScreen from "./components/InfoScreen";
 import TopBar from "./components/TopBar";
+import { trackPageView } from "./analytics";
 import { useLanguage } from "./i18n/LanguageContext";
 import type { CircleMarker, LceaCase, Point } from "./types";
 import { exportToPdf } from "./utils/pdfExport";
@@ -45,6 +46,16 @@ function App() {
   const [loadedCase, setLoadedCase] = useState<LceaCase | null>(null);
   const [error, setError] = useState("");
   const viewerContainerRef = useRef<HTMLDivElement>(null);
+  const skipInitialPageView = useRef(true);
+
+  useEffect(() => {
+    if (skipInitialPageView.current) {
+      skipInitialPageView.current = false;
+      return;
+    }
+    const path = screen === "home" ? "/" : screen === "info" ? "/how-calculated" : "/measure";
+    trackPageView(path);
+  }, [screen]);
 
   const handleFileSelect = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {

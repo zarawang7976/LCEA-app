@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { trackCalculatorUsed } from "../analytics";
 import { useLanguage } from "../i18n/LanguageContext";
 import type { CircleMarker, Point } from "../types";
 import { computeLcea, getLceaCategory, leftLceaDisplay } from "../types";
@@ -242,6 +243,15 @@ export default function ImageViewer({
   const lceaRight = computeLcea(center2, lateralEdgeRight);
   const categoryLeft = getLceaCategory(lceaLeft);
   const categoryRight = getLceaCategory(lceaRight);
+
+  const markersPlaced =
+    !(circle1.cx === 0 && circle1.cy === 0 && circle2.cx === 0 && circle2.cy === 0);
+
+  useEffect(() => {
+    if (dragging) return;
+    if (!imageUrl || !markersPlaced) return;
+    trackCalculatorUsed();
+  }, [dragging, imageUrl, markersPlaced]);
 
   return (
     <div className="viewer-wrap">
