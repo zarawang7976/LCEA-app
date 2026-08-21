@@ -3,6 +3,7 @@ import HomeScreen from "./components/HomeScreen";
 import ImageViewer from "./components/ImageViewer";
 import InfoScreen from "./components/InfoScreen";
 import TopBar from "./components/TopBar";
+import { useLanguage } from "./i18n/LanguageContext";
 import type { CircleMarker, LceaCase, Point } from "./types";
 import { exportToPdf } from "./utils/pdfExport";
 import { loadCase as loadCaseFile, saveCase, scaleMarkersToContainer } from "./utils/saveLoad";
@@ -33,6 +34,7 @@ function buildCase(
 }
 
 function App() {
+  const { t, locale } = useLanguage();
   const [screen, setScreen] = useState<Screen>("home");
   const [imageUrl, setImageUrl] = useState("");
   const [circle1, setCircle1] = useState<CircleMarker>(DEFAULT_CIRCLE);
@@ -44,41 +46,49 @@ function App() {
   const [error, setError] = useState("");
   const viewerContainerRef = useRef<HTMLDivElement>(null);
 
-  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setError("");
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      setError("Please choose an image file (JPEG or PNG).");
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = () => setImageUrl(reader.result as string);
-    reader.onerror = () => setError("Failed to read file.");
-    reader.readAsDataURL(file);
-    setCircle1(DEFAULT_CIRCLE);
-    setCircle2(DEFAULT_CIRCLE);
-    setLateralEdgeLeft(DEFAULT_POINT);
-    setLateralEdgeRight(DEFAULT_POINT);
-    e.target.value = "";
-  }, []);
+  const handleFileSelect = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setError("");
+      const file = e.target.files?.[0];
+      if (!file) return;
+      if (!file.type.startsWith("image/")) {
+        setError(t.errorChooseImage);
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => setImageUrl(reader.result as string);
+      reader.onerror = () => setError(t.errorReadFile);
+      reader.readAsDataURL(file);
+      setCircle1(DEFAULT_CIRCLE);
+      setCircle2(DEFAULT_CIRCLE);
+      setLateralEdgeLeft(DEFAULT_POINT);
+      setLateralEdgeRight(DEFAULT_POINT);
+      e.target.value = "";
+    },
+    [t]
+  );
 
-  const handleLoadCase = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setError("");
-    const file = e.target.files?.[0];
-    if (!file) return;
-    loadCaseFile(file)
-      .then((data) => {
-        setImageUrl(data.imageDataUrl);
-        setCircle1(data.circle1);
-        setCircle2(data.circle2);
-        setLateralEdgeLeft(data.lateralEdgeLeft);
-        setLateralEdgeRight(data.lateralEdgeRight);
-        setLoadedCase(data);
-      })
-      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load case."));
-    e.target.value = "";
-  }, []);
+  const handleLoadCase = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setError("");
+      const file = e.target.files?.[0];
+      if (!file) return;
+      loadCaseFile(file)
+        .then((data) => {
+          setImageUrl(data.imageDataUrl);
+          setCircle1(data.circle1);
+          setCircle2(data.circle2);
+          setLateralEdgeLeft(data.lateralEdgeLeft);
+          setLateralEdgeRight(data.lateralEdgeRight);
+          setLoadedCase(data);
+        })
+        .catch((err) =>
+          setError(err instanceof Error ? err.message : t.errorLoadCase)
+        );
+      e.target.value = "";
+    },
+    [t]
+  );
 
   useEffect(() => {
     if (!loadedCase?.containerWidth || !containerSize) return;
@@ -92,7 +102,7 @@ function App() {
 
   const handleSaveCase = useCallback(() => {
     if (!imageUrl) {
-      setError("No image loaded.");
+      setError(t.errorNoImage);
       return;
     }
     saveCase(
@@ -101,20 +111,35 @@ function App() {
       containerSize ?? undefined
     );
     setError("");
-  }, [imageUrl, circle1, circle2, lateralEdgeLeft, lateralEdgeRight, containerSize]);
+  }, [imageUrl, circle1, circle2, lateralEdgeLeft, lateralEdgeRight, containerSize, t]);
 
   const handleExportPdf = useCallback(() => {
     if (!imageUrl) {
-      setError("No image loaded.");
+      setError(t.errorNoImage);
       return;
     }
     const rect = viewerContainerRef.current?.getBoundingClientRect();
     if (!rect?.width || !rect?.height) {
-      setError("Viewer size unknown. Try resizing the window and export again.");
+      setError(t.errorViewerSize);
       return;
     }
     const img = new Image();
     img.onload = () => {
+      // jsPDF default fonts do not embed CJK glyphs; keep English labels for Chinese.
+      const pdfLabels =
+        locale === "zh"
+          ? {
+              left: "Left",
+              right: "Right",
+              leftLcea: "Left LCEA",
+              rightLcea: "Right LCEA",
+            }
+          : {
+              left: t.pdfLeft,
+              right: t.pdfRight,
+              leftLcea: t.pdfLeftLcea,
+              rightLcea: t.pdfRightLcea,
+            };
       exportToPdf(
         imageUrl,
         circle1,
@@ -123,13 +148,14 @@ function App() {
         lateralEdgeRight,
         { width: rect.width, height: rect.height },
         img.naturalWidth,
-        img.naturalHeight
+        img.naturalHeight,
+        pdfLabels
       );
       setError("");
     };
-    img.onerror = () => setError("Failed to prepare image for PDF.");
+    img.onerror = () => setError(t.errorPdfImage);
     img.src = imageUrl;
-  }, [imageUrl, circle1, circle2, lateralEdgeLeft, lateralEdgeRight]);
+  }, [imageUrl, circle1, circle2, lateralEdgeLeft, lateralEdgeRight, t, locale]);
 
   if (screen === "home") {
     return (
@@ -161,75 +187,72 @@ function App() {
       <TopBar />
       <div className="app">
         <header className="app-header measure-header">
-        <button type="button" className="back-btn" onClick={() => setScreen("home")}>
-          ← Back to home
-        </button>
-        <div className="measure-title-wrap">
-          <h1 className="app-title">LCEA Calculator</h1>
-          <p className="subtitle">Lateral Center Edge Angle from hip X-ray</p>
-        </div>
-      </header>
+          <button type="button" className="back-btn" onClick={() => setScreen("home")}>
+            {t.backHome}
+          </button>
+          <div className="measure-title-wrap">
+            <h1 className="app-title">{t.appTitle}</h1>
+            <p className="subtitle">{t.appSubtitle}</p>
+          </div>
+        </header>
 
-      <div className="toolbar">
-        <input
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          onChange={handleFileSelect}
-          className="hidden-input"
-          id="upload-input"
-          aria-label="Upload X-ray image"
-        />
-        <label htmlFor="upload-input" className="btn btn-primary">
-          Upload X-ray
-        </label>
-        <input
-          type="file"
-          accept=".lcea,application/json"
-          onChange={handleLoadCase}
-          className="hidden-input"
-          id="load-input"
-          aria-label="Load saved case"
-        />
-        <label htmlFor="load-input" className="btn">
-          Load case
-        </label>
-        <button type="button" className="btn" onClick={handleSaveCase} disabled={!imageUrl}>
-          Save case
-        </button>
-        <button type="button" className="btn" onClick={handleExportPdf} disabled={!imageUrl}>
-          Export PDF
-        </button>
-      </div>
-
-      {error && (
-        <div className="error" role="alert">
-          {error}
+        <div className="toolbar">
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={handleFileSelect}
+            className="hidden-input"
+            id="upload-input"
+            aria-label={t.uploadAria}
+          />
+          <label htmlFor="upload-input" className="btn btn-primary">
+            {t.uploadXray}
+          </label>
+          <input
+            type="file"
+            accept=".lcea,application/json"
+            onChange={handleLoadCase}
+            className="hidden-input"
+            id="load-input"
+            aria-label={t.loadAria}
+          />
+          <label htmlFor="load-input" className="btn">
+            {t.loadCase}
+          </label>
+          <button type="button" className="btn" onClick={handleSaveCase} disabled={!imageUrl}>
+            {t.saveCase}
+          </button>
+          <button type="button" className="btn" onClick={handleExportPdf} disabled={!imageUrl}>
+            {t.exportPdf}
+          </button>
         </div>
-      )}
 
-      {!imageUrl ? (
-        <div className="placeholder">
-          <p>Upload an X-ray image (JPEG or PNG) to start.</p>
-          <p>
-            Place two circles on left and right femoral heads (drag edge to resize). Place the purple
-            dot on the left lateral acetabulum and the green dot on the right.
-          </p>
-        </div>
-      ) : (
-        <ImageViewer
-          imageUrl={imageUrl}
-          circle1={circle1}
-          circle2={circle2}
-          lateralEdgeLeft={lateralEdgeLeft}
-          lateralEdgeRight={lateralEdgeRight}
-          onCircle1Change={setCircle1}
-          onCircle2Change={setCircle2}
-          onLateralEdgeLeftChange={setLateralEdgeLeft}
-          onLateralEdgeRightChange={setLateralEdgeRight}
-          onContainerSize={setContainerSize}
-          containerRef={viewerContainerRef}
-        />
-      )}
+        {error && (
+          <div className="error" role="alert">
+            {error}
+          </div>
+        )}
+
+        {!imageUrl ? (
+          <div className="placeholder">
+            <p>{t.placeholderTitle}</p>
+            <p>{t.placeholderHint}</p>
+          </div>
+        ) : (
+          <ImageViewer
+            imageUrl={imageUrl}
+            circle1={circle1}
+            circle2={circle2}
+            lateralEdgeLeft={lateralEdgeLeft}
+            lateralEdgeRight={lateralEdgeRight}
+            onCircle1Change={setCircle1}
+            onCircle2Change={setCircle2}
+            onLateralEdgeLeftChange={setLateralEdgeLeft}
+            onLateralEdgeRightChange={setLateralEdgeRight}
+            onContainerSize={setContainerSize}
+            containerRef={viewerContainerRef}
+          />
+        )}
       </div>
     </>
   );

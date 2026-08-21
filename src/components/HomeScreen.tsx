@@ -1,3 +1,5 @@
+import { useLanguage } from "../i18n/LanguageContext";
+
 export default function HomeScreen({
   onHowCalculated,
   onStartMeasuring,
@@ -5,18 +7,20 @@ export default function HomeScreen({
   onHowCalculated: () => void;
   onStartMeasuring: () => void;
 }) {
+  const { t } = useLanguage();
+
   return (
     <div className="home">
       <div className="home-hero">
-        <h1 className="home-title">LCEA Calculator</h1>
-        <p className="home-subtitle">Lateral Center Edge Angle from hip X-ray</p>
+        <h1 className="home-title">{t.appTitle}</h1>
+        <p className="home-subtitle">{t.appSubtitle}</p>
       </div>
       <div className="home-actions">
         <button type="button" className="home-btn home-btn-secondary" onClick={onHowCalculated}>
-          How the angle is calculated
+          {t.howCalculated}
         </button>
         <button type="button" className="home-btn home-btn-primary" onClick={onStartMeasuring}>
-          Measure an X-ray
+          {t.measureXray}
         </button>
       </div>
     </div>

@@ -18,7 +18,13 @@ export function exportToPdf(
   lateralEdgeRight: Point,
   containerRect: { width: number; height: number },
   naturalWidth: number,
-  naturalHeight: number
+  naturalHeight: number,
+  labels?: {
+    left: string;
+    right: string;
+    leftLcea: string;
+    rightLcea: string;
+  }
 ): void {
   const scale = Math.min(
     containerRect.width / naturalWidth,
@@ -89,17 +95,21 @@ export function exportToPdf(
   pdf.line(r2.x, r2.y, rlatR.x, rlatR.y);
 
   const labelY = imgY + 18;
+  const leftLabel = labels?.left ?? "Left";
+  const rightLabel = labels?.right ?? "Right";
+  const leftLceaLabel = labels?.leftLcea ?? "Left LCEA";
+  const rightLceaLabel = labels?.rightLcea ?? "Right LCEA";
   pdf.setFontSize(FONT_SIZE_LABEL);
   pdf.setTextColor(LEFT_TEXT_RGB.r, LEFT_TEXT_RGB.g, LEFT_TEXT_RGB.b);
-  pdf.text(`Left: ${lceaLeft}°`, r1.x - 32, labelY);
+  pdf.text(`${leftLabel}: ${lceaLeft}°`, r1.x - 32, labelY);
   pdf.setTextColor(RIGHT_TEXT_RGB.r, RIGHT_TEXT_RGB.g, RIGHT_TEXT_RGB.b);
-  pdf.text(`Right: ${lceaRight}°`, r2.x + 6, labelY);
+  pdf.text(`${rightLabel}: ${lceaRight}°`, r2.x + 6, labelY);
 
   pdf.setFontSize(FONT_SIZE_SUMMARY);
   pdf.setTextColor(0, 0, 0);
   const summaryY = imgY + imgH + 20;
-  pdf.text(`Left LCEA: ${lceaLeft}°`, imgX, summaryY);
-  pdf.text(`Right LCEA: ${lceaRight}°`, imgX, summaryY + 18);
+  pdf.text(`${leftLceaLabel}: ${lceaLeft}°`, imgX, summaryY);
+  pdf.text(`${rightLceaLabel}: ${lceaRight}°`, imgX, summaryY + 18);
 
   pdf.save(
     `LCEA-L${lceaLeft}-R${lceaRight}-${new Date().toISOString().slice(0, 10)}.pdf`

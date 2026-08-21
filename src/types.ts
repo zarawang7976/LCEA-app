@@ -38,12 +38,12 @@ export function leftLceaDisplay(angleDeg: number): number {
   return Math.round(((360 - angleDeg) % 360) * 10) / 10;
 }
 
-/** Category for display; matches "How the angle is calculated" ranges. */
-export type LceaCategory = "Dysplastic" | "Borderline" | "Normal" | "Increased coverage";
+/** Category key for display; matches "How the angle is calculated" ranges. */
+export type LceaCategoryKey = "dysplastic" | "borderline" | "normal" | "increasedCoverage";
 
-export function getLceaCategory(angleDeg: number): LceaCategory {
-  if (angleDeg < 20) return "Dysplastic";
-  if (angleDeg < 25) return "Borderline";
-  if (angleDeg < 40) return "Normal";
-  return "Increased coverage";
+export function getLceaCategory(angleDeg: number): LceaCategoryKey {
+  if (angleDeg < 20) return "dysplastic";
+  if (angleDeg < 25) return "borderline";
+  if (angleDeg < 40) return "normal";
+  return "increasedCoverage";
 }

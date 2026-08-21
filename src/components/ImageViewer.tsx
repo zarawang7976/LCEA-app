@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useLanguage } from "../i18n/LanguageContext";
 import type { CircleMarker, Point } from "../types";
 import { computeLcea, getLceaCategory, leftLceaDisplay } from "../types";
 
@@ -48,6 +49,7 @@ export default function ImageViewer({
   onContainerSize,
   containerRef: containerRefProp,
 }: ImageViewerProps) {
+  const { t } = useLanguage();
   const containerRefLocal = useRef<HTMLDivElement>(null);
   const containerRef = containerRefProp ?? containerRefLocal;
   const [containerSize, setContainerSize] = useState<{ w: number; h: number }>({ w: 400, h: 400 });
@@ -255,7 +257,7 @@ export default function ImageViewer({
       >
         <img
           src={imageUrl}
-          alt="X-ray"
+          alt={t.xrayAlt}
           className="viewer-image"
           onLoad={handleImageLoad}
           draggable={false}
@@ -387,12 +389,24 @@ export default function ImageViewer({
       </div>
       <div className="lcea-result">
         <div className="lcea-result-side">
-          <span className="lcea-left"><strong>Left LCEA: {lceaLeft}°</strong></span>
-          <span className="lcea-category">Status: {categoryLeft}</span>
+          <span className="lcea-left">
+            <strong>
+              {t.leftLcea}: {lceaLeft}°
+            </strong>
+          </span>
+          <span className="lcea-category">
+            {t.status}: {t.categories[categoryLeft]}
+          </span>
         </div>
         <div className="lcea-result-side">
-          <span className="lcea-right"><strong>Right LCEA: {lceaRight}°</strong></span>
-          <span className="lcea-category">Status: {categoryRight}</span>
+          <span className="lcea-right">
+            <strong>
+              {t.rightLcea}: {lceaRight}°
+            </strong>
+          </span>
+          <span className="lcea-category">
+            {t.status}: {t.categories[categoryRight]}
+          </span>
         </div>
       </div>
     </div>
