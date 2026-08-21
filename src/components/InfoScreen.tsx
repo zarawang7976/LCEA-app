@@ -15,11 +15,13 @@ export default function InfoScreen({ onBack }: { onBack: () => void }) {
         <section>
           <h3>{info.femoralHeadTitle}</h3>
           <p>{info.femoralHeadBody}</p>
+          <p>{info.femoralHeadGuide}</p>
         </section>
 
         <section>
           <h3>{info.acetabulumTitle}</h3>
           <p>{info.acetabulumBody}</p>
+          <p>{info.acetabulumGuide}</p>
         </section>
 
         <section>
@@ -42,6 +44,22 @@ export default function InfoScreen({ onBack }: { onBack: () => void }) {
             <li>{info.rangeIncreased}</li>
           </ul>
           <p>{info.disclaimer}</p>
+        </section>
+
+        <section className="info-tutorial">
+          <h3>{info.tutorialTitle}</h3>
+          <figure className="info-tutorial-item">
+            <img src="/tutorial/raw-xray.png" alt={info.tutorialRawAlt} />
+            <figcaption>{info.tutorialRawCaption}</figcaption>
+          </figure>
+          <figure className="info-tutorial-item">
+            <img src="/tutorial/landmarks.png" alt={info.tutorialLandmarksAlt} />
+            <figcaption>{info.tutorialLandmarksCaption}</figcaption>
+          </figure>
+          <figure className="info-tutorial-item">
+            <img src="/tutorial/calculator-example.png" alt={info.tutorialExampleAlt} />
+            <figcaption>{info.tutorialExampleCaption}</figcaption>
+          </figure>
         </section>
       </div>
     </div>

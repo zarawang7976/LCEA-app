@@ -56,6 +56,15 @@ export interface Messages {
     rangeNormal: string;
     rangeIncreased: string;
     disclaimer: string;
+    femoralHeadGuide: string;
+    acetabulumGuide: string;
+    tutorialTitle: string;
+    tutorialRawCaption: string;
+    tutorialLandmarksCaption: string;
+    tutorialExampleCaption: string;
+    tutorialRawAlt: string;
+    tutorialLandmarksAlt: string;
+    tutorialExampleAlt: string;
   };
 }
 
@@ -122,6 +131,17 @@ const en: Messages = {
       "≥ 40° — Increased coverage; can be associated with pincer-type morphology or overcoverage.",
     disclaimer:
       "These ranges are guidelines. Interpretation should be done by a qualified clinician in the context of the full image and clinical picture.",
+    femoralHeadGuide: "Please reference the yellow circles in the picture below.",
+    acetabulumGuide: "Please reference the red circles in the picture below.",
+    tutorialTitle: "How to use the calculator",
+    tutorialRawCaption: "1. Start with a raw AP pelvic or hip X-ray (or MRI converted to JPEG/PNG).",
+    tutorialLandmarksCaption:
+      "2. Identify the landmarks: yellow circles mark the femoral heads, and red circles mark the lateral acetabulum on each side.",
+    tutorialExampleCaption:
+      "3. In the calculator, fit a circle to each femoral head and place a dot on each lateral acetabulum. Your overlay should look similar to this example.",
+    tutorialRawAlt: "Raw pelvic X-ray without overlays",
+    tutorialLandmarksAlt: "X-ray with yellow circles on the femoral heads and red circles on the lateral acetabulum",
+    tutorialExampleAlt: "Example of a completed measurement in the HipMetrics calculator",
   },
 };
 
@@ -181,6 +201,17 @@ const zh: Messages = {
     rangeNormal: "25°–39° — 成人一般属正常覆盖。",
     rangeIncreased: "≥ 40° — 覆盖增加；可能与钳夹型形态或过度覆盖有关。",
     disclaimer: "以上范围为参考指南。解读应由具备资质的临床医生结合完整影像和临床表现进行。",
+    femoralHeadGuide: "请参考下方图片中的黄色圆圈。",
+    acetabulumGuide: "请参考下方图片中的红色圆圈。",
+    tutorialTitle: "如何使用计算器",
+    tutorialRawCaption: "1. 从一张未经标注的骨盆/髋关节前后位 X 线片（或已转为 JPEG/PNG 的 MRI）开始。",
+    tutorialLandmarksCaption:
+      "2. 识别标志点：黄色圆圈标出股骨头，红色圆圈标出两侧髋臼外侧缘。",
+    tutorialExampleCaption:
+      "3. 在计算器中为每个股骨头拟合一个圆，并在两侧髋臼外侧缘放置圆点。完成后的叠加效果应与此示例相近。",
+    tutorialRawAlt: "未叠加标记的骨盆 X 线片",
+    tutorialLandmarksAlt: "黄色圆圈标出股骨头、红色圆圈标出髋臼外侧缘的 X 线片",
+    tutorialExampleAlt: "HipMetrics 计算器完成测量后的示例",
   },
 };
 
@@ -248,6 +279,17 @@ const es: Messages = {
       "≥ 40° — Cobertura aumentada; puede asociarse a morfología tipo pinza o sobrecobertura.",
     disclaimer:
       "Estos rangos son orientativos. La interpretación debe realizarla un clínico cualificado en el contexto de la imagen completa y el cuadro clínico.",
+    femoralHeadGuide: "Consulte los círculos amarillos en la imagen de abajo.",
+    acetabulumGuide: "Consulte los círculos rojos en la imagen de abajo.",
+    tutorialTitle: "Cómo usar la calculadora",
+    tutorialRawCaption: "1. Comience con una radiografía AP de pelvis o cadera sin marcas (o una RM convertida a JPEG/PNG).",
+    tutorialLandmarksCaption:
+      "2. Identifique los puntos de referencia: los círculos amarillos marcan las cabezas femorales y los rojos el borde lateral del acetábulo en cada lado.",
+    tutorialExampleCaption:
+      "3. En la calculadora, ajuste un círculo a cada cabeza femoral y coloque un punto en cada borde lateral del acetábulo. El resultado debería parecerse a este ejemplo.",
+    tutorialRawAlt: "Radiografía pélvica sin superposiciones",
+    tutorialLandmarksAlt: "Radiografía con círculos amarillos en las cabezas femorales y círculos rojos en el acetábulo lateral",
+    tutorialExampleAlt: "Ejemplo de una medición completada en la calculadora HipMetrics",
   },
 };
 
