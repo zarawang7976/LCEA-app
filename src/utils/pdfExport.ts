@@ -1,6 +1,7 @@
 import { jsPDF } from "jspdf";
 import type { CircleMarker, Point } from "../types";
 import { computeLcea, leftLceaDisplay } from "../types";
+import { drawWatermarkOnPdf } from "./watermark";
 
 const DOT_R = 5;
 const LEFT_RGB = { r: 192, g: 167, b: 211 };
@@ -61,6 +62,7 @@ export function exportToPdf(
 
   const imgFormat = imageDataUrl.startsWith("data:image/png") ? "PNG" : "JPEG";
   pdf.addImage(imageDataUrl, imgFormat, imgX, imgY, imgW, imgH);
+  drawWatermarkOnPdf(pdf, imgX, imgY, imgW, imgH);
 
   const toPdf = (x: number, y: number) => ({
     x: imgX + x * imgScale,

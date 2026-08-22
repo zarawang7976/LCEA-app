@@ -3,6 +3,7 @@ import { trackCalculatorUsed } from "../analytics";
 import { useLanguage } from "../i18n/LanguageContext";
 import type { CircleMarker, Point } from "../types";
 import { computeLcea, getLceaCategory, leftLceaDisplay } from "../types";
+import { WATERMARK_OPACITY, WATERMARK_SVG_ROTATE, WATERMARK_TEXT } from "../utils/watermark";
 
 const DEFAULT_CIRCLE_R = 24;
 const MIN_R = 8;
@@ -280,6 +281,26 @@ export default function ImageViewer({
           preserveAspectRatio="none"
         >
           <defs>
+            <pattern
+              id="hipmetrics-watermark"
+              width="280"
+              height="150"
+              patternUnits="userSpaceOnUse"
+              patternTransform={`rotate(${WATERMARK_SVG_ROTATE})`}
+            >
+              <text
+                x="0"
+                y="72"
+                fill="#ffffff"
+                fillOpacity={WATERMARK_OPACITY}
+                fontSize="15"
+                fontFamily="Segoe UI, system-ui, sans-serif"
+                fontWeight="600"
+                letterSpacing="0.4"
+              >
+                {WATERMARK_TEXT}
+              </text>
+            </pattern>
             <marker
               id="arrowhead-left"
               markerWidth="8"
@@ -301,6 +322,13 @@ export default function ImageViewer({
               <polygon points="0 0, 8 3, 0 6" fill={RIGHT_STROKE} />
             </marker>
           </defs>
+
+          <rect
+            width={containerSize.w}
+            height={containerSize.h}
+            fill="url(#hipmetrics-watermark)"
+            pointerEvents="none"
+          />
 
           {/* Line connecting left and right femoral head centers */}
           <line
