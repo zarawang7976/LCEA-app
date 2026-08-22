@@ -12,16 +12,47 @@ export default function InfoScreen({ onBack }: { onBack: () => void }) {
       <div className="info-content">
         <h2>{info.title}</h2>
 
+        <figure className="info-guide">
+          <div className="info-guide-frame">
+            <img src="/tutorial/landmarks.png" alt={info.guideImageAlt} />
+            <svg className="info-guide-arrows" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
+              <defs>
+                <marker id="info-arrowhead" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+                  <polygon points="0 0, 7 3.5, 0 7" fill="#1a1a1a" />
+                </marker>
+              </defs>
+              <line
+                x1="20"
+                y1="18"
+                x2="27"
+                y2="50"
+                stroke="#1a1a1a"
+                strokeWidth="1.4"
+                markerEnd="url(#info-arrowhead)"
+              />
+              <line
+                x1="80"
+                y1="18"
+                x2="76"
+                y2="40"
+                stroke="#1a1a1a"
+                strokeWidth="1.4"
+                markerEnd="url(#info-arrowhead)"
+              />
+            </svg>
+            <p className="info-guide-label info-guide-label-1">{info.guideStep1}</p>
+            <p className="info-guide-label info-guide-label-2">{info.guideStep2}</p>
+          </div>
+        </figure>
+
         <section>
           <h3>{info.femoralHeadTitle}</h3>
           <p>{info.femoralHeadBody}</p>
-          <p>{info.femoralHeadGuide}</p>
         </section>
 
         <section>
           <h3>{info.acetabulumTitle}</h3>
           <p>{info.acetabulumBody}</p>
-          <p>{info.acetabulumGuide}</p>
         </section>
 
         <section>
@@ -44,22 +75,6 @@ export default function InfoScreen({ onBack }: { onBack: () => void }) {
             <li>{info.rangeIncreased}</li>
           </ul>
           <p>{info.disclaimer}</p>
-        </section>
-
-        <section className="info-tutorial">
-          <h3>{info.tutorialTitle}</h3>
-          <figure className="info-tutorial-item">
-            <img src="/tutorial/raw-xray.png" alt={info.tutorialRawAlt} />
-            <figcaption>{info.tutorialRawCaption}</figcaption>
-          </figure>
-          <figure className="info-tutorial-item">
-            <img src="/tutorial/landmarks.png" alt={info.tutorialLandmarksAlt} />
-            <figcaption>{info.tutorialLandmarksCaption}</figcaption>
-          </figure>
-          <figure className="info-tutorial-item">
-            <img src="/tutorial/calculator-example.png" alt={info.tutorialExampleAlt} />
-            <figcaption>{info.tutorialExampleCaption}</figcaption>
-          </figure>
         </section>
       </div>
     </div>
