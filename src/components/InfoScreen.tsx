@@ -22,19 +22,19 @@ export default function InfoScreen({ onBack }: { onBack: () => void }) {
                 </marker>
               </defs>
               <line
-                x1="18"
+                x1="18.5"
                 y1="16"
                 x2="19.5"
-                y2="61"
+                y2="47"
                 stroke="#1a1a1a"
                 strokeWidth="1.4"
                 markerEnd="url(#info-arrowhead)"
               />
               <line
-                x1="86"
+                x1="90"
                 y1="16"
-                x2="93"
-                y2="50"
+                x2="84"
+                y2="40"
                 stroke="#1a1a1a"
                 strokeWidth="1.4"
                 markerEnd="url(#info-arrowhead)"
