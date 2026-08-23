@@ -6,7 +6,7 @@ import TopBar from "./components/TopBar";
 import { trackPageView } from "./analytics";
 import { useLanguage } from "./i18n/LanguageContext";
 import type { CircleMarker, LceaCase, Point } from "./types";
-import { exportToPdf } from "./utils/pdfExport";
+import { exportAnnotated, type ExportFormat } from "./utils/exportAnnotated";
 import { loadCase as loadCaseFile, saveCase, scaleMarkersToContainer } from "./utils/saveLoad";
 import "./App.css";
 
@@ -45,6 +45,8 @@ function App() {
   const [containerSize, setContainerSize] = useState<{ w: number; h: number } | null>(null);
   const [loadedCase, setLoadedCase] = useState<LceaCase | null>(null);
   const [error, setError] = useState("");
+  const [exportFormat, setExportFormat] = useState<ExportFormat>("pdf");
+  const [exporting, setExporting] = useState(false);
   const viewerContainerRef = useRef<HTMLDivElement>(null);
   const skipInitialPageView = useRef(true);
 
@@ -124,7 +126,7 @@ function App() {
     setError("");
   }, [imageUrl, circle1, circle2, lateralEdgeLeft, lateralEdgeRight, containerSize, t]);
 
-  const handleExportPdf = useCallback(() => {
+  const handleExport = useCallback(async () => {
     if (!imageUrl) {
       setError(t.errorNoImage);
       return;
@@ -134,39 +136,48 @@ function App() {
       setError(t.errorViewerSize);
       return;
     }
-    const img = new Image();
-    img.onload = () => {
-      // jsPDF default fonts do not embed CJK glyphs; keep English labels for Chinese.
-      const pdfLabels =
-        locale === "zh"
-          ? {
-              left: "Left",
-              right: "Right",
-              leftLcea: "Left LCEA",
-              rightLcea: "Right LCEA",
-            }
-          : {
-              left: t.pdfLeft,
-              right: t.pdfRight,
-              leftLcea: t.pdfLeftLcea,
-              rightLcea: t.pdfRightLcea,
-            };
-      exportToPdf(
-        imageUrl,
+    const pdfLabels =
+      locale === "zh"
+        ? {
+            left: "Left",
+            right: "Right",
+            leftLcea: "Left LCEA",
+            rightLcea: "Right LCEA",
+          }
+        : {
+            left: t.pdfLeft,
+            right: t.pdfRight,
+            leftLcea: t.pdfLeftLcea,
+            rightLcea: t.pdfRightLcea,
+          };
+    setExporting(true);
+    try {
+      await exportAnnotated({
+        format: exportFormat,
+        imageDataUrl: imageUrl,
         circle1,
         circle2,
         lateralEdgeLeft,
         lateralEdgeRight,
-        { width: rect.width, height: rect.height },
-        img.naturalWidth,
-        img.naturalHeight,
-        pdfLabels
-      );
+        containerRect: { width: rect.width, height: rect.height },
+        labels: pdfLabels,
+      });
       setError("");
-    };
-    img.onerror = () => setError(t.errorPdfImage);
-    img.src = imageUrl;
-  }, [imageUrl, circle1, circle2, lateralEdgeLeft, lateralEdgeRight, t, locale]);
+    } catch {
+      setError(t.errorExportImage);
+    } finally {
+      setExporting(false);
+    }
+  }, [
+    imageUrl,
+    circle1,
+    circle2,
+    lateralEdgeLeft,
+    lateralEdgeRight,
+    t,
+    locale,
+    exportFormat,
+  ]);
 
   if (screen === "home") {
     return (
@@ -233,9 +244,31 @@ function App() {
           <button type="button" className="btn" onClick={handleSaveCase} disabled={!imageUrl}>
             {t.saveCase}
           </button>
-          <button type="button" className="btn" onClick={handleExportPdf} disabled={!imageUrl}>
-            {t.exportPdf}
-          </button>
+          <div className="export-controls">
+            <label htmlFor="export-format" className="export-format-label">
+              {t.exportFormatLabel}
+            </label>
+            <select
+              id="export-format"
+              className="export-format-select"
+              value={exportFormat}
+              disabled={!imageUrl || exporting}
+              onChange={(e) => setExportFormat(e.target.value as ExportFormat)}
+              aria-label={t.exportFormatLabel}
+            >
+              <option value="png">{t.exportFormatPng}</option>
+              <option value="jpeg">{t.exportFormatJpeg}</option>
+              <option value="pdf">{t.exportFormatPdf}</option>
+            </select>
+            <button
+              type="button"
+              className="btn"
+              onClick={() => void handleExport()}
+              disabled={!imageUrl || exporting}
+            >
+              {t.exportAction}
+            </button>
+          </div>
         </div>
 
         {error && (

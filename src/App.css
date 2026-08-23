@@ -385,6 +385,34 @@
   filter: brightness(1.08);
 }
 
+.export-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.export-format-label {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.export-format-select {
+  padding: 0.5rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--fg);
+  font-size: 0.95rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.export-format-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .error {
   padding: 0.5rem 1rem;
   margin-bottom: 1rem;

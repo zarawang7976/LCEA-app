@@ -18,7 +18,11 @@ export interface Messages {
   uploadXray: string;
   loadCase: string;
   saveCase: string;
-  exportPdf: string;
+  exportAction: string;
+  exportFormatLabel: string;
+  exportFormatPng: string;
+  exportFormatJpeg: string;
+  exportFormatPdf: string;
   uploadAria: string;
   loadAria: string;
   placeholderTitle: string;
@@ -33,6 +37,7 @@ export interface Messages {
   errorNoImage: string;
   errorViewerSize: string;
   errorPdfImage: string;
+  errorExportImage: string;
   pdfLeft: string;
   pdfRight: string;
   pdfLeftLcea: string;
@@ -72,7 +77,11 @@ const en: Messages = {
   uploadXray: "Upload X-ray",
   loadCase: "Load case",
   saveCase: "Save case",
-  exportPdf: "Export PDF",
+  exportAction: "Export",
+  exportFormatLabel: "Export format",
+  exportFormatPng: "PNG",
+  exportFormatJpeg: "JPEG",
+  exportFormatPdf: "PDF",
   uploadAria: "Upload X-ray image",
   loadAria: "Load saved case",
   placeholderTitle: "Upload an X-ray image (JPEG or PNG) to start.",
@@ -88,6 +97,7 @@ const en: Messages = {
   errorNoImage: "No image loaded.",
   errorViewerSize: "Viewer size unknown. Try resizing the window and export again.",
   errorPdfImage: "Failed to prepare image for PDF.",
+  errorExportImage: "Failed to export the annotated image.",
   pdfLeft: "Left",
   pdfRight: "Right",
   pdfLeftLcea: "Left LCEA",
@@ -142,7 +152,11 @@ const zh: Messages = {
   uploadXray: "上传 X 线片",
   loadCase: "加载病例",
   saveCase: "保存病例",
-  exportPdf: "导出 PDF",
+  exportAction: "导出",
+  exportFormatLabel: "导出格式",
+  exportFormatPng: "PNG",
+  exportFormatJpeg: "JPEG",
+  exportFormatPdf: "PDF",
   uploadAria: "上传 X 线片图像",
   loadAria: "加载已保存的病例",
   placeholderTitle: "请上传 X 线片图像（JPEG 或 PNG）开始。",
@@ -158,6 +172,7 @@ const zh: Messages = {
   errorNoImage: "尚未加载图像。",
   errorViewerSize: "无法获取查看器尺寸。请调整窗口大小后重试导出。",
   errorPdfImage: "准备 PDF 图像失败。",
+  errorExportImage: "导出标注图像失败。",
   pdfLeft: "左侧",
   pdfRight: "右侧",
   pdfLeftLcea: "左侧 LCEA",
@@ -204,7 +219,11 @@ const es: Messages = {
   uploadXray: "Subir radiografía",
   loadCase: "Cargar caso",
   saveCase: "Guardar caso",
-  exportPdf: "Exportar PDF",
+  exportAction: "Exportar",
+  exportFormatLabel: "Formato de exportación",
+  exportFormatPng: "PNG",
+  exportFormatJpeg: "JPEG",
+  exportFormatPdf: "PDF",
   uploadAria: "Subir imagen de radiografía",
   loadAria: "Cargar caso guardado",
   placeholderTitle: "Suba una imagen de radiografía (JPEG o PNG) para comenzar.",
@@ -220,6 +239,7 @@ const es: Messages = {
   errorNoImage: "No hay imagen cargada.",
   errorViewerSize: "Tamaño del visor desconocido. Redimensione la ventana e intente exportar de nuevo.",
   errorPdfImage: "No se pudo preparar la imagen para el PDF.",
+  errorExportImage: "No se pudo exportar la imagen anotada.",
   pdfLeft: "Izquierda",
   pdfRight: "Derecha",
   pdfLeftLcea: "LCEA izquierda",
