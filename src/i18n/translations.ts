@@ -42,6 +42,7 @@ export interface Messages {
   pdfRight: string;
   pdfLeftLcea: string;
   pdfRightLcea: string;
+  interpretationGuideTitle: string;
   categories: Record<LceaCategoryKey, string>;
   info: {
     title: string;
@@ -102,6 +103,7 @@ const en: Messages = {
   pdfRight: "Right",
   pdfLeftLcea: "Left LCEA",
   pdfRightLcea: "Right LCEA",
+  interpretationGuideTitle: "LCEA Interpretation Guide",
   categories: {
     dysplastic: "Dysplastic",
     borderline: "Borderline",
@@ -177,6 +179,7 @@ const zh: Messages = {
   pdfRight: "右侧",
   pdfLeftLcea: "左侧 LCEA",
   pdfRightLcea: "右侧 LCEA",
+  interpretationGuideTitle: "LCEA 解读指南",
   categories: {
     dysplastic: "发育不良",
     borderline: "临界",
@@ -244,6 +247,7 @@ const es: Messages = {
   pdfRight: "Derecha",
   pdfLeftLcea: "LCEA izquierda",
   pdfRightLcea: "LCEA derecha",
+  interpretationGuideTitle: "Guía de interpretación del LCEA",
   categories: {
     dysplastic: "Displásica",
     borderline: "Límite",

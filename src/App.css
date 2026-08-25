@@ -504,6 +504,32 @@
   color: var(--muted);
 }
 
+.interpretation-guide {
+  margin: 0.25rem 0 1.25rem;
+  padding: 0.9rem 1rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-secondary);
+}
+
+.interpretation-guide h3 {
+  margin: 0 0 0.55rem;
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.interpretation-guide ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.interpretation-guide li {
+  margin: 0.35rem 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
 @media (prefers-color-scheme: light) {
   .viewer-container {
     background: #e8e8e8;

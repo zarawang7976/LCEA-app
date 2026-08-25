@@ -14,6 +14,14 @@ const FONT_SIZE_LABEL = 18;
 const FONT_SIZE_SUMMARY = 18;
 const JPEG_QUALITY = 0.92;
 
+const INTERPRETATION_TITLE = "LCEA Interpretation Guide";
+const INTERPRETATION_LINES = [
+  "< 20° — Often considered dysplastic; the socket may provide insufficient coverage (hip dysplasia).",
+  "20°–25° — Borderline; may warrant follow-up or context from other findings.",
+  "25°–39° — Generally normal coverage for adults.",
+  "≥ 40° — Increased coverage; can be associated with pincer-type morphology or overcoverage.",
+];
+
 export interface ExportLabels {
   left: string;
   right: string;
@@ -109,6 +117,36 @@ function canvasToBlob(canvas: HTMLCanvasElement, type: string, quality?: number)
   });
 }
 
+function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
+  const words = text.split(" ");
+  const lines: string[] = [];
+  let current = "";
+  for (const word of words) {
+    const trial = current ? `${current} ${word}` : word;
+    if (ctx.measureText(trial).width <= maxWidth) {
+      current = trial;
+    } else {
+      if (current) lines.push(current);
+      if (ctx.measureText(word).width <= maxWidth) {
+        current = word;
+      } else {
+        let chunk = "";
+        for (const ch of word) {
+          const next = chunk + ch;
+          if (ctx.measureText(next).width <= maxWidth) chunk = next;
+          else {
+            if (chunk) lines.push(chunk);
+            chunk = ch;
+          }
+        }
+        current = chunk;
+      }
+    }
+  }
+  if (current) lines.push(current);
+  return lines;
+}
+
 export function exportFilename(lceaLeft: number, lceaRight: number, ext: string): string {
   return `LCEA-L${lceaLeft}-R${lceaRight}-${new Date().toISOString().slice(0, 10)}.${ext}`;
 }
@@ -121,6 +159,7 @@ export async function renderAnnotatedCanvas(params: Omit<ExportParams, "format">
   canvas: HTMLCanvasElement;
   lceaLeft: number;
   lceaRight: number;
+  imageHeight: number;
 }> {
   const img = await loadImage(params.imageDataUrl);
   const naturalWidth = img.naturalWidth;
@@ -151,8 +190,26 @@ export async function renderAnnotatedCanvas(params: Omit<ExportParams, "format">
   const dashShort = 4 * rScale;
   const labelFont = FONT_SIZE_LABEL * rScale;
   const summaryFont = FONT_SIZE_SUMMARY * rScale;
-  const footerH = summaryFont * 3.2;
+  const guideTitleFont = Math.max(12, summaryFont * 0.78);
+  const guideBodyFont = Math.max(11, summaryFont * 0.58);
+  const guideLineHeight = guideBodyFont * 1.35;
+  const footerPad = summaryFont * 0.55;
   const labelY = labelFont;
+
+  const measureCtx = document.createElement("canvas").getContext("2d");
+  if (!measureCtx) throw new Error("Canvas 2D context unavailable");
+  const textMaxWidth = naturalWidth - footerPad * 2;
+  measureCtx.font = `${guideBodyFont}px Helvetica, Arial, sans-serif`;
+  const wrappedGuide = INTERPRETATION_LINES.flatMap((line) =>
+    wrapText(measureCtx, `• ${line}`, textMaxWidth)
+  );
+  const summaryBlock = summaryFont * 3.2;
+  const guideBlock =
+    footerPad * 0.4 +
+    guideTitleFont * 1.4 +
+    wrappedGuide.length * guideLineHeight +
+    footerPad;
+  const footerH = summaryBlock + guideBlock;
 
   const canvas = document.createElement("canvas");
   canvas.width = naturalWidth;
@@ -200,40 +257,55 @@ export async function renderAnnotatedCanvas(params: Omit<ExportParams, "format">
   const summaryY2 = naturalHeight + summaryFont * 2.35;
   ctx.font = `${summaryFont}px Helvetica, Arial, sans-serif`;
   ctx.fillStyle = "#000000";
-  ctx.fillText(`${leftLceaLabel}: ${lceaLeft}°`, 0, summaryY1);
-  ctx.fillText(`${rightLceaLabel}: ${lceaRight}°`, 0, summaryY2);
+  ctx.fillText(`${leftLceaLabel}: ${lceaLeft}°`, footerPad, summaryY1);
+  ctx.fillText(`${rightLceaLabel}: ${lceaRight}°`, footerPad, summaryY2);
 
-  return { canvas, lceaLeft, lceaRight };
+  let guideY = naturalHeight + summaryFont * 3.15;
+  ctx.font = `bold ${guideTitleFont}px Helvetica, Arial, sans-serif`;
+  ctx.fillStyle = "#111111";
+  ctx.fillText(INTERPRETATION_TITLE, footerPad, guideY);
+  guideY += guideTitleFont * 0.55 + guideLineHeight;
+  ctx.font = `${guideBodyFont}px Helvetica, Arial, sans-serif`;
+  ctx.fillStyle = "#333333";
+  for (const line of wrappedGuide) {
+    ctx.fillText(line, footerPad, guideY);
+    guideY += guideLineHeight;
+  }
+
+  return { canvas, lceaLeft, lceaRight, imageHeight: naturalHeight };
 }
 
 function savePdfFromCanvas(
   canvas: HTMLCanvasElement,
+  imageHeight: number,
   lceaLeft: number,
   lceaRight: number
 ): void {
-  const naturalWidth = canvas.width;
-  const naturalHeight = canvas.height;
-  const pdf = new jsPDF({
-    orientation: naturalWidth > naturalHeight ? "landscape" : "portrait",
+  const imageWidth = canvas.width;
+  const probe = new jsPDF({
+    orientation: imageWidth > imageHeight ? "landscape" : "portrait",
     unit: "px",
   });
-  const pageW = pdf.internal.pageSize.getWidth();
-  const pageH = pdf.internal.pageSize.getHeight();
-  const imgScale = Math.min(pageW / naturalWidth, pageH / naturalHeight);
-  const imgW = naturalWidth * imgScale;
-  const imgH = naturalHeight * imgScale;
-  const imgX = (pageW - imgW) / 2;
-  const imgY = (pageH - imgH) / 2;
+  const pageW = probe.internal.pageSize.getWidth();
+  const pageH = probe.internal.pageSize.getHeight();
+  const imgScale = Math.min(pageW / imageWidth, pageH / imageHeight);
+  const drawnW = imageWidth * imgScale;
+  const drawnH = canvas.height * imgScale;
+  const pdf = new jsPDF({
+    orientation: drawnW >= drawnH ? "landscape" : "portrait",
+    unit: "px",
+    format: [drawnW, drawnH],
+  });
   const dataUrl = canvas.toDataURL("image/png");
-  pdf.addImage(dataUrl, "PNG", imgX, imgY, imgW, imgH);
+  pdf.addImage(dataUrl, "PNG", 0, 0, drawnW, drawnH);
   pdf.save(exportFilename(lceaLeft, lceaRight, "pdf"));
 }
 
 export async function exportAnnotated(params: ExportParams): Promise<void> {
-  const { canvas, lceaLeft, lceaRight } = await renderAnnotatedCanvas(params);
+  const { canvas, lceaLeft, lceaRight, imageHeight } = await renderAnnotatedCanvas(params);
 
   if (params.format === "pdf") {
-    savePdfFromCanvas(canvas, lceaLeft, lceaRight);
+    savePdfFromCanvas(canvas, imageHeight, lceaLeft, lceaRight);
     return;
   }
 

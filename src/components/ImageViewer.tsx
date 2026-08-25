@@ -447,6 +447,15 @@ export default function ImageViewer({
           </span>
         </div>
       </div>
+      <section className="interpretation-guide" aria-label={t.interpretationGuideTitle}>
+        <h3>{t.interpretationGuideTitle}</h3>
+        <ul>
+          <li>{t.info.rangeDysplastic}</li>
+          <li>{t.info.rangeBorderline}</li>
+          <li>{t.info.rangeNormal}</li>
+          <li>{t.info.rangeIncreased}</li>
+        </ul>
+      </section>
     </div>
   );
 }
