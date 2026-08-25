@@ -262,6 +262,14 @@ export async function renderAnnotatedCanvas(params: Omit<ExportParams, "format">
     guideY += guideLineHeight;
   }
 
+  ctx.font = `${guideBodyFont}px Helvetica, Arial, sans-serif`;
+  ctx.fillStyle = "#666666";
+  ctx.textAlign = "right";
+  ctx.textBaseline = "bottom";
+  ctx.fillText("Visit hipmetrics.org", naturalWidth - footerPad, canvas.height - footerPad * 0.35);
+  ctx.textAlign = "left";
+  ctx.textBaseline = "alphabetic";
+
   return { canvas, lceaLeft, lceaRight, imageHeight: naturalHeight };
 }
 
