@@ -24,8 +24,8 @@ export default function InfoScreen({ onBack }: { onBack: () => void }) {
               <line
                 x1="19.4"
                 y1="13.5"
-                x2="20.6"
-                y2="45.2"
+                x2="20.8"
+                y2="50"
                 stroke="#1a1a1a"
                 strokeWidth="1.4"
                 markerEnd="url(#info-arrowhead)"
@@ -33,8 +33,8 @@ export default function InfoScreen({ onBack }: { onBack: () => void }) {
               <line
                 x1="88"
                 y1="16"
-                x2="79"
-                y2="43.5"
+                x2="81.4"
+                y2="44.2"
                 stroke="#1a1a1a"
                 strokeWidth="1.4"
                 markerEnd="url(#info-arrowhead)"
