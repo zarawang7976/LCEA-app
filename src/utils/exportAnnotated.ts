@@ -14,7 +14,6 @@ const FONT_SIZE_LABEL = 18;
 const FONT_SIZE_SUMMARY = 18;
 const JPEG_QUALITY = 0.92;
 
-const INTERPRETATION_TITLE = "LCEA Interpretation Guide";
 const INTERPRETATION_LINES = [
   "< 20° — Often considered dysplastic; the socket may provide insufficient coverage (hip dysplasia).",
   "20°–25° — Borderline; may warrant follow-up or context from other findings.",
@@ -190,7 +189,6 @@ export async function renderAnnotatedCanvas(params: Omit<ExportParams, "format">
   const dashShort = 4 * rScale;
   const labelFont = FONT_SIZE_LABEL * rScale;
   const summaryFont = FONT_SIZE_SUMMARY * rScale;
-  const guideTitleFont = Math.max(12, summaryFont * 0.78);
   const guideBodyFont = Math.max(11, summaryFont * 0.58);
   const guideLineHeight = guideBodyFont * 1.35;
   const footerPad = summaryFont * 0.55;
@@ -204,11 +202,7 @@ export async function renderAnnotatedCanvas(params: Omit<ExportParams, "format">
     wrapText(measureCtx, `• ${line}`, textMaxWidth)
   );
   const summaryBlock = summaryFont * 3.2;
-  const guideBlock =
-    footerPad * 0.4 +
-    guideTitleFont * 1.4 +
-    wrappedGuide.length * guideLineHeight +
-    footerPad;
+  const guideBlock = wrappedGuide.length * guideLineHeight + footerPad;
   const footerH = summaryBlock + guideBlock;
 
   const canvas = document.createElement("canvas");
@@ -261,10 +255,6 @@ export async function renderAnnotatedCanvas(params: Omit<ExportParams, "format">
   ctx.fillText(`${rightLceaLabel}: ${lceaRight}°`, footerPad, summaryY2);
 
   let guideY = naturalHeight + summaryFont * 3.15;
-  ctx.font = `bold ${guideTitleFont}px Helvetica, Arial, sans-serif`;
-  ctx.fillStyle = "#111111";
-  ctx.fillText(INTERPRETATION_TITLE, footerPad, guideY);
-  guideY += guideTitleFont * 0.55 + guideLineHeight;
   ctx.font = `${guideBodyFont}px Helvetica, Arial, sans-serif`;
   ctx.fillStyle = "#333333";
   for (const line of wrappedGuide) {
