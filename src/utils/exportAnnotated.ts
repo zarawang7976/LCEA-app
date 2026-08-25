@@ -8,8 +8,6 @@ export type ExportFormat = "png" | "jpeg" | "pdf";
 const DOT_R = 5;
 const LEFT_RGB = { r: 192, g: 167, b: 211 };
 const RIGHT_RGB = { r: 167, g: 211, b: 184 };
-const LEFT_TEXT_RGB = { r: 74, g: 64, b: 85 };
-const RIGHT_TEXT_RGB = { r: 53, g: 74, b: 61 };
 const FONT_SIZE_LABEL = 18;
 const FONT_SIZE_SUMMARY = 18;
 const JPEG_QUALITY = 0.92;
@@ -202,8 +200,9 @@ export async function renderAnnotatedCanvas(params: Omit<ExportParams, "format">
     wrapText(measureCtx, `• ${line}`, textMaxWidth)
   );
   const summaryBlock = summaryFont * 3.2;
+  const guideGap = summaryFont;
   const guideBlock = wrappedGuide.length * guideLineHeight + footerPad;
-  const footerH = summaryBlock + guideBlock;
+  const footerH = summaryBlock + guideGap + guideBlock;
 
   const canvas = document.createElement("canvas");
   canvas.width = naturalWidth;
@@ -242,19 +241,20 @@ export async function renderAnnotatedCanvas(params: Omit<ExportParams, "format">
 
   ctx.font = `${labelFont}px Helvetica, Arial, sans-serif`;
   ctx.textBaseline = "alphabetic";
-  ctx.fillStyle = rgb(LEFT_TEXT_RGB);
+  ctx.fillStyle = rgb(LEFT_RGB);
   ctx.fillText(`${leftLabel}: ${lceaLeft}°`, c1.x - 32 * rScale, labelY);
-  ctx.fillStyle = rgb(RIGHT_TEXT_RGB);
+  ctx.fillStyle = rgb(RIGHT_RGB);
   ctx.fillText(`${rightLabel}: ${lceaRight}°`, c2.x + 6 * rScale, labelY);
 
   const summaryY1 = naturalHeight + summaryFont * 1.15;
   const summaryY2 = naturalHeight + summaryFont * 2.35;
   ctx.font = `${summaryFont}px Helvetica, Arial, sans-serif`;
-  ctx.fillStyle = "#000000";
+  ctx.fillStyle = rgb(LEFT_RGB);
   ctx.fillText(`${leftLceaLabel}: ${lceaLeft}°`, footerPad, summaryY1);
+  ctx.fillStyle = rgb(RIGHT_RGB);
   ctx.fillText(`${rightLceaLabel}: ${lceaRight}°`, footerPad, summaryY2);
 
-  let guideY = naturalHeight + summaryFont * 3.15;
+  let guideY = naturalHeight + summaryFont * 3.15 + guideGap;
   ctx.font = `${guideBodyFont}px Helvetica, Arial, sans-serif`;
   ctx.fillStyle = "#333333";
   for (const line of wrappedGuide) {
